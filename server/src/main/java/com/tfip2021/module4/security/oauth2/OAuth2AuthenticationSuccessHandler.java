@@ -1,6 +1,8 @@
 package com.tfip2021.module4.security.oauth2;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +18,8 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     
@@ -47,9 +51,19 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         transientOAuth2AuthorizationRequestService.deleteByState(state);
         DatabaseUser dbUser = (DatabaseUser) authentication.getPrincipal();
         String jwtToken = jwtSerivce.createJWT(dbUser.getUserId());
-        return UriComponentsBuilder.fromUriString(targetUrl)
-            .queryParam("token", jwtToken)
+        URI uri = URI.create(targetUrl);
+        String fragment = uri.getFragment();
+        try {
+            return UriComponentsBuilder.fromUri(
+                new URI(uri.getScheme(), uri.getSchemeSpecificPart(), null)
+            )
+            .pathSegment("#", fragment)
+            .queryParam("#token", jwtToken)
             .build()
             .toString();
+        } catch (IllegalArgumentException | URISyntaxException e) {
+            log.error(e.getMessage());
+        }
+        return targetUrl;
     }
 }
