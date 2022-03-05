@@ -27,7 +27,6 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
         AuthenticationException exception
     ) throws IOException {
         String state = HttpServletRequestUtils.getState(request);
-        System.out.println("failure " + state);
         String targetUrl = service.getRedirectUri(state);
         targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
             .queryParam("error", exception.getLocalizedMessage())

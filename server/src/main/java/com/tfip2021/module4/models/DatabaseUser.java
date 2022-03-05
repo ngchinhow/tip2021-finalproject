@@ -26,8 +26,10 @@ import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Singular;
@@ -36,6 +38,7 @@ import lombok.Singular;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 @Setter
 @Table(
     name = "USER",
@@ -46,83 +49,85 @@ import lombok.Singular;
 )
 public class DatabaseUser implements OidcUser, UserDetails {
     private static final long serialVersionUID = PACKAGE_SERIAL_VERSION_UID;
+    // For org.springframework.security.core.AuthenticatedPrincipal
+    @Transient
+    private static final String NAME_ATTRIBUTE_KEY = IdTokenClaimNames.SUB;
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "USERID")
+    @Column(name = "userid")
     private Long userId;
 
-    @Column(name = "PROVIDER")
+    @Column(name = "provider")
     private String provider;
 
-    @Column(name = "PROVIDERUSERID")
+    @Column(name = "provideruserid", length = 500)
     private String providerUserId;
 
-    @Column(name = "EMAIL")
+    @Column(name = "email")
     private String email;
 
-    @Column(name = "DISPLAYNAME")
+    @Column(name = "displayname")
     private String displayName;
 
-    @Column(name = "PROFILEPICTUREURL")
+    @Column(name = "profilepictureurl")
     private String profilePictureUrl;
 
     // From org.springframework.security.core.userdetails.User
-    @Column(name = "USERNAME")
+    @Column(name = "username")
     private String username;
-    @Transient
+    
+    @Column(name = "password")
     private String password;
+
     @Transient
     @Singular
+    @Getter(AccessLevel.NONE)
     private Set<GrantedAuthority> authorities;
-    @Column(name = "ACCOUNTNONEXPIRED")
+
+    @Column(name = "accountnonexpired")
+    @Getter(AccessLevel.NONE)
     @Builder.Default
     private boolean accountNonExpired = true;
-    @Column(name = "ACCOUNTNONLOCKED")
+
+    @Column(name = "accountnonlocked")
+    @Getter(AccessLevel.NONE)
     @Builder.Default
     private boolean accountNonLocked = true;
-    @Column(name = "CREDENTIALSNONEXPIRED")
+
+    @Column(name = "credentialsnonexpired")
+    @Getter(AccessLevel.NONE)
     @Builder.Default
     private boolean credentialsNonExpired = true;
-    @Column(name = "ENABLED")
+
+    @Column(name = "enabled")
+    @Getter(AccessLevel.NONE)
     @Builder.Default
     private boolean enabled = true;
 
     // From org.springframework.security.oauth2.core.user.DefaultOAuth2User
     @Transient
     @Singular
-    private Map<String, Object> attributes;
+    @Getter(AccessLevel.NONE)
+    private transient Map<String, Object> attributes;
 
     // From org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser
     @Transient
+    @Getter(AccessLevel.NONE)
     private OidcIdToken idToken;
     @Transient
+    @Getter(AccessLevel.NONE)
     private OidcUserInfo userInfo;
 
-    // For org.springframework.security.core.AuthenticatedPrincipal
-    @Transient
-    private final String nameAttributeKey = IdTokenClaimNames.SUB;
-
     @CreationTimestamp
-    @Column(name = "CREATEDAT", nullable = false, updatable = false)
+    @Column(name = "createdat", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
     @UpdateTimestamp
-    @Column(name = "MODIFIEDAT", nullable = false)
+    @Column(name = "modifiedat", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedAt;
-
-    // Explicit Getters. Need to override superinterfaces. Setters set by Lombok.
-    public static long getSerialversionuid() { return serialVersionUID; }
-    public Long getUserId() { return userId; }
-    public String getProvider() { return provider; }
-    public String getProviderUserId() { return providerUserId; }
-    public String getEmail() { return email; }
-    public String getDisplayName() { return displayName; }
-    public String getProfilePictureUrl() { return profilePictureUrl; }
-    public String getUsername() { return username; }
-    public String getPassword() { return password; }
 
     @Override // From UserDetails
     public Set<GrantedAuthority> getAuthorities() { return authorities; }
@@ -144,8 +149,6 @@ public class DatabaseUser implements OidcUser, UserDetails {
     public OidcUserInfo getUserInfo() { return userInfo; }
     @Override // From AuthenticatedPrincipal
     public String getName() {
-        return this.getAttribute(this.nameAttributeKey).toString();
+        return this.getAttribute(NAME_ATTRIBUTE_KEY).toString();
     }
-    public Date getCreatedAt() { return createdAt; }
-    public Date getModifiedAt() { return modifiedAt; }
 }

@@ -67,10 +67,9 @@ public class SocialOAuth2AuthorizationRequestResolver implements OAuth2Authoriza
         String registrationId = req.getAttribute(
             OAUTH2_AUTHORIZATION_REQUEST_REGISTRATION_ID_ATTRIBUTE_NAME
         );
-        // System.out.println(str);
         // Modify Authorization Request based on Social Provider
         if (registrationId.equals(SocialProvider.GOOGLE.getLoginProvider())) {
-            Map<String, Object> additionalParams = new HashMap<String, Object>();
+            Map<String, Object> additionalParams = new HashMap<>();
             additionalParams.putAll(req.getAdditionalParameters());
             additionalParams.put("access_type", "offline");
             return OAuth2AuthorizationRequest.from(req)

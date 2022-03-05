@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class PropertiesDisseminatorFactory {
 
+    private PropertiesDisseminatorFactory() { }
+
     public static DatabaseUser mergeUserWithAttributes(
         DatabaseUser user,
         String operation,
@@ -28,8 +30,15 @@ public class PropertiesDisseminatorFactory {
                 providerUserId,
                 attributes
             );
-        } 
-        // Add more social providers here
+        } else if (registrationId.equals(SocialProvider.LOCAL.getLoginProvider())) {
+            disseminator = new LocalPropertiesDisseminator(
+                user,
+                operation,
+                registrationId,
+                providerUserId,
+                attributes
+            );
+        }
         else {
             throw new AuthenticationNotSupportedException(
               "Authenticating via " + registrationId +
@@ -48,6 +57,8 @@ public class PropertiesDisseminatorFactory {
         PropertiesDisseminator disseminator;
         if (registrationId.equals(SocialProvider.GOOGLE.getLoginProvider())) {
             disseminator = new GooglePropertiesDisseminator(attributes);
+        } else if (registrationId.equals(SocialProvider.LOCAL.getLoginProvider())) {
+            disseminator = new LocalPropertiesDisseminator(attributes);
         }
         else {
             throw new AuthenticationNotSupportedException(

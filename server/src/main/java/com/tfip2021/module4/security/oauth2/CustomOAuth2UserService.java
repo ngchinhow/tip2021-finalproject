@@ -21,7 +21,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oauth2User = super.loadUser(oauth2UserRequest);
         String provider = oauth2UserRequest.getClientRegistration()
             .getRegistrationId();
-        System.out.println(">>> user service attributes: " + oauth2User.getAttributes());
+
         try {
             return service.upsert(
                 provider,

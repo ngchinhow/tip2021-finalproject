@@ -1,7 +1,7 @@
 package com.tfip2021.module4.dto;
 
 public enum SocialProvider {
-    GOOGLE("google");
+    GOOGLE("google"), LOCAL("local");
 
     private String loginProvider;
 

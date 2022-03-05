@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.tfip2021.module4.models.DatabaseUser;
-import com.tfip2021.module4.security.oauth2.jwt.JWTService;
+import com.tfip2021.module4.security.jwt.JWTService;
 import com.tfip2021.module4.services.TransientOAuth2AuthorizationRequestService;
 import com.tfip2021.module4.utils.HttpServletRequestUtils;
 

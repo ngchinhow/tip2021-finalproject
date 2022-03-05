@@ -1,8 +1,8 @@
-package com.tfip2021.module4.security.oauth2.jwt;
+package com.tfip2021.module4.security.jwt;
 
 import java.io.IOException;
+import java.util.Optional;
 
-import javax.security.sasl.AuthenticationException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +12,6 @@ import com.tfip2021.module4.models.DatabaseUser;
 import com.tfip2021.module4.services.DatabaseUserService;
 import com.tfip2021.module4.utils.HttpServletRequestUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,7 +19,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
-    private static final Logger logger = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
     @Autowired
     private JWTService jwtService;
 
@@ -34,22 +31,23 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain
     ) throws IOException, ServletException {
-        try {
-            DatabaseUser dbUser = HttpServletRequestUtils
-                .getBearerToken(request)
-                .flatMap(jwtService::getUserIdFromJWT)
-                .flatMap(databaseUserService::getById)
-                .orElseThrow(AuthenticationException::new);
+        Optional<DatabaseUser> dbUser = HttpServletRequestUtils
+            // Get literal bearer string
+            .getBearerToken(request)
+            // Parse JWT and get UserId
+            .flatMap(jwtService::getUserIdFromJWT)
+            // Retrieve user from database
+            .flatMap(databaseUserService::getById);
+        if (dbUser.isPresent()) {
+            DatabaseUser foundUser = dbUser.get();
             UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
-                    dbUser, null, dbUser.getAuthorities()
+                    foundUser, null, foundUser.getAuthorities()
                 );
             authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request)
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (AuthenticationException e) {
-            logger.error("Cannot authenticate user");
         }
         
         filterChain.doFilter(request, response);

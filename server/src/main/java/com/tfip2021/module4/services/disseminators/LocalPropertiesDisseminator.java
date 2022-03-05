@@ -5,16 +5,12 @@ import java.util.Map;
 import com.tfip2021.module4.models.DatabaseUser;
 import com.tfip2021.module4.models.DatabaseUser.DatabaseUserBuilder;
 
-import org.springframework.security.oauth2.core.oidc.OidcIdToken;
-import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
-
-public class GooglePropertiesDisseminator extends PropertiesDisseminator {
-
-    public GooglePropertiesDisseminator(Map<String, Object> attributes) {
+public class LocalPropertiesDisseminator extends PropertiesDisseminator {
+    public LocalPropertiesDisseminator(Map<String, Object> attributes) {
         super(attributes);
     }
 
-    public GooglePropertiesDisseminator(
+    public LocalPropertiesDisseminator(
         DatabaseUser user,
         String operation,
         String provider,
@@ -23,7 +19,7 @@ public class GooglePropertiesDisseminator extends PropertiesDisseminator {
     ) {
         super(user, operation, provider, providerUserId, attributes);
     }
-    
+
     @Override
     public DatabaseUser disseminateAttributes() {
         if (!this.isSupportedOperation())
@@ -31,34 +27,24 @@ public class GooglePropertiesDisseminator extends PropertiesDisseminator {
                 "The provided operation " + this.getOperation() + 
                 " is not supported yet!"
             );
+        
         DatabaseUserBuilder builder = this.getUser().toBuilder()
-            .displayName(this.getDisplayName())
-            .profilePictureUrl(this.getProfilePictureUrl())
-            .attributes(this.getAttributes())
-            .idToken(this.getIdToken())
-            .userInfo(this.getUserInfo());
+            .displayName(this.getDisplayName());
         if (this.getOperation().equals("create"))
             builder = builder
                 .provider(this.getProvider())
                 .providerUserId(this.getProviderUserId())
                 .username(this.getProviderUserId())
-                .email(this.getEmail());
-        return builder.build();
+                .email(this.getEmail())
+                .password(this.getPassword());
+        return builder.build();        
     }
 
     public String getDisplayName() {
-        return (String) this.getAttributes().get("name");
+        return (String) this.getAttributes().get("displayName");
     }
 
-    public String getProfilePictureUrl() {
-        return (String) this.getAttributes().get("picture");
-    }
-
-    public OidcIdToken getIdToken() {
-        return (OidcIdToken) this.getAttributes().get("idToken");
-    }
-
-    public OidcUserInfo getUserInfo() {
-        return (OidcUserInfo) this.getAttributes().get("userInfo");
+    public String getPassword() {
+        return (String) this.getAttributes().get("password");
     }
 }

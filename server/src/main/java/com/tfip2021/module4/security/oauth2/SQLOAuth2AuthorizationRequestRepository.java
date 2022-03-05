@@ -15,13 +15,14 @@ import org.springframework.util.Assert;
 @Component
 public class SQLOAuth2AuthorizationRequestRepository implements
     AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
+    private static final String REQUEST_NOT_NULL = "request cannot be null";
     @Autowired
     private TransientOAuth2AuthorizationRequestService service;
 
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
         // Copied from org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository
-        Assert.notNull(request, "request cannot be null");
+        Assert.notNull(request, REQUEST_NOT_NULL);
         String state = HttpServletRequestUtils.getState(request);
         if (state == null) {
             return null;
@@ -37,7 +38,7 @@ public class SQLOAuth2AuthorizationRequestRepository implements
         HttpServletResponse response
     ) {
         // Copied from org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository
-        Assert.notNull(request, "request cannot be null");
+        Assert.notNull(request, REQUEST_NOT_NULL);
         Assert.notNull(response, "response cannot be null");
         if (authorizationRequest == null) {
             this.removeAuthorizationRequest(request, response);
@@ -56,7 +57,7 @@ public class SQLOAuth2AuthorizationRequestRepository implements
         HttpServletResponse response
     ) {
         // Copied from org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository
-        Assert.notNull(request, "request cannot be null");
+        Assert.notNull(request, REQUEST_NOT_NULL);
         Assert.notNull(response, "response cannot be null");
 
         /* 
@@ -72,7 +73,6 @@ public class SQLOAuth2AuthorizationRequestRepository implements
     }
 
     @Override
-    @Deprecated
     public OAuth2AuthorizationRequest removeAuthorizationRequest(HttpServletRequest request) {
         // Deprecated method; forced to implement bacause of interface.
         return null;

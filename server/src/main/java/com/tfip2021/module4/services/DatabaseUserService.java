@@ -7,12 +7,12 @@ import javax.naming.AuthenticationNotSupportedException;
 
 import com.tfip2021.module4.models.DatabaseUser;
 import com.tfip2021.module4.repositories.DatabaseUserRepository;
+import com.tfip2021.module4.security.exceptions.DuplicateUserException;
 import com.tfip2021.module4.services.disseminators.PropertiesDisseminatorFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Service;
-
+import org.springframework.util.StringUtils;
 @Service
 public class DatabaseUserService {
     @Autowired
@@ -22,6 +22,10 @@ public class DatabaseUserService {
         return repo.findById(userId);
     }
 
+    public DatabaseUser getByEmail(String email) {
+        return repo.findByEmail(email);
+    }
+
     public DatabaseUser upsert(
         String provider,
         String providerUserId,
@@ -29,12 +33,13 @@ public class DatabaseUserService {
     ) throws AuthenticationNotSupportedException {
         String userEmail = PropertiesDisseminatorFactory
             .getUserEmail(provider, attributes);
-        DatabaseUser dbUser = repo.findByEmail(userEmail);
+        DatabaseUser dbUser = this.getByEmail(userEmail);
         if (dbUser != null) {
             if (!dbUser.getProvider().equals(provider)) {
                 String existingUserProvider = dbUser.getProvider();
-                throw new AuthenticationServiceException(
-                    "You have already signed up with "  + existingUserProvider +
+                throw new DuplicateUserException(
+                    "You have already signed up with " + 
+                    StringUtils.capitalize(existingUserProvider) +
                     ". Please log in via that method instead."
                 );
             } else {

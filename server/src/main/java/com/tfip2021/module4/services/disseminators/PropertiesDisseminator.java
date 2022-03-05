@@ -18,7 +18,7 @@ public abstract class PropertiesDisseminator {
     private String providerUserId;
     Map<String, Object> attributes;
 
-    public PropertiesDisseminator(Map<String, Object> attributes) {
+    protected PropertiesDisseminator(Map<String, Object> attributes) {
         this.attributes = attributes;
     }
     
@@ -28,5 +28,12 @@ public abstract class PropertiesDisseminator {
     */
     public abstract DatabaseUser disseminateAttributes();
 
-    public abstract String getEmail();
+    public String getEmail() {
+        return (String) this.getAttributes().get("email");
+    }
+
+    public boolean isSupportedOperation() {
+        return this.getOperation().equals("create")
+            || this.getOperation().equals("update");
+    }
 }

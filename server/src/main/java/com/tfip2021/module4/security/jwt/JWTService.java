@@ -1,11 +1,11 @@
-package com.tfip2021.module4.security.oauth2.jwt;
+package com.tfip2021.module4.security.jwt;
+
+import static com.tfip2021.module4.models.Constants.JWT_SECRET;
+import static com.tfip2021.module4.models.Constants.JWT_EXPIRATIONMILLISEC;
 
 import java.util.Date;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
@@ -15,43 +15,39 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class JWTService {
-    private static final Logger logger = LoggerFactory.getLogger(JWTService.class);
-    @Value("${app.token.secret}")
-    private String secret;
 
-    @Value("${app.token.expirationMilliseconds}")
-    private long expirationTime;
-    
     public String createJWT(Long databaseUserId) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + expirationTime);
+        Date expiryDate = new Date(now.getTime() + JWT_EXPIRATIONMILLISEC);
 
         return Jwts.builder().setSubject(Long.toString(databaseUserId))
             .setIssuedAt(new Date())
             .setExpiration(expiryDate)
-            .signWith(SignatureAlgorithm.HS512, secret)
+            .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
             .compact();
     }
 
     public Optional<Long> getUserIdFromJWT(String token) {
         try {
-            Claims claims = Jwts.parser().setSigningKey(secret)
+            Claims claims = Jwts.parser().setSigningKey(JWT_SECRET)
                 .parseClaimsJws(token)
                 .getBody();
             return Optional.of(Long.parseLong(claims.getSubject()));
         } catch (SignatureException ex) {
-            logger.error("Invalid JWT signature");
+            log.error("Invalid JWT signature");
         } catch (MalformedJwtException ex) {
-            logger.error("Invalid JWT token");
+            log.error("Invalid JWT token");
         } catch (ExpiredJwtException ex) {
-            logger.error("Expired JWT token");
+            log.error("Expired JWT token");
         } catch (UnsupportedJwtException ex) {
-            logger.error("Unsupported JWT token");
+            log.error("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {
-            logger.error("JWT claims string is empty.");
+            log.error("JWT claims string is empty.");
         }
         return Optional.empty();
     }

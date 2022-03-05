@@ -1,16 +1,21 @@
 package com.tfip2021.module4.utils;
 
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.util.StringUtils;
 
 import static com.tfip2021.module4.models.Constants.REQUEST_STATE_PARAM_NAME;
-
-import java.util.Optional;
-
 import static com.tfip2021.module4.models.Constants.REQUEST_REDIRECT_URI_PARAM_NAME;
 
 public class HttpServletRequestUtils {
+
+    private HttpServletRequestUtils() {
+        // Prevents an instantiation of a Utility class
+        throw new IllegalStateException("Utility class");
+    }
+
     public static String getState(HttpServletRequest request) {
         return request.getParameter(REQUEST_STATE_PARAM_NAME);
     }
