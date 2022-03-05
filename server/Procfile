@@ -1,0 +1,1 @@
+web: java -Dserver.port=$PORT -Dspring.datasource.url=db-mysql-make-my-day-do-user-10991790-0.b.db.ondigitalocean.com:25060/make_my_day -Dspring.datasource.username=doadmin -Dspring.datasource.password=DAanM1j0NHBVtrHc $JAVA_OPTS -jar target/module4-0.0.1-SNAPSHOT.jar
