@@ -52,7 +52,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         DatabaseUser dbUser = (DatabaseUser) authentication.getPrincipal();
         String jwtToken = jwtSerivce.createJWT(dbUser.getUserId());
         URI uri = URI.create(targetUrl);
-        String fragment = uri.getFragment();
+        String fragment = uri.getFragment().substring(1);
         try {
             return UriComponentsBuilder.fromUri(
                 new URI(uri.getScheme(), uri.getSchemeSpecificPart(), null)
