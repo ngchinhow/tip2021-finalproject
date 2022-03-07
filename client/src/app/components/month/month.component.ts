@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DateTime } from 'luxon';
-import { DateTimeService } from '../services/datetime.service';
+import { DateTimeService } from 'src/app/services/datetime.service';
 
 @Component({
   selector: 'app-month',

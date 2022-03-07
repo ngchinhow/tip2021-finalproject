@@ -1,0 +1,40 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Login</mat-card-title>
+    <form [formGroup]="form" (ngSubmit)="login()">
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput type="text" name="email" formControlName="email"
+          placeholder="Please enter your email address" />
+        <mat-error> Please provide a valid email address </mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput type="password" name="password" formControlName="password"
+          placeholder="Please enter your password" />
+        <mat-error *ngIf="password?.errors?.['required']">
+          Password is required
+        </mat-error>
+        <mat-error *ngIf="password?.errors?.['minlength']">
+          Password must at least be 8 characters long
+        </mat-error>
+      </mat-form-field>
+      <mat-error *ngIf="isLoginFailed">
+        The email and password combination is incorrect.
+      </mat-error>
+      <button type="submit" mat-raised-button color="primary">
+        Login
+      </button>
+      <button mat-button routerLink="/register">Register</button>
+      <mat-divider></mat-divider>
+      <div fxLayout="row" fxLayoutAlign="center center">
+        <p>Sign in with:</p>
+        <div class="login-icon" *ngFor="let provider of providers.social">
+          <a [href]="provider.loginUri">
+            <img [src]="provider.imageUri" [alt]="provider.imageAlt" />
+          </a>
+        </div>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

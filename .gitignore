@@ -1,0 +1,8 @@
+### Environment related files ###
+dev_env.cmd
+prod_env.cmd
+deploy.cmd
+remove_env.cmd
+
+### Testing files ###
+file.json
