@@ -1,9 +1,23 @@
+<div fxLayout="row" fxLayoutAlign="space-around center">
+  <button mat-raised-button (click)="prevMonth()">
+    {{ currentMonth.minus({ months: 1 }).toLocaleString({ month: 'short' }) }}
+  </button>
+  <div>
+    {{ currentMonth.toLocaleString({ month: 'long', year: 'numeric'}) }}
+  </div>
+  <button mat-raised-button (click)="nextMonth()">
+    {{ currentMonth.plus({ months: 1 }).toLocaleString({ month: 'short' }) }}
+  </button>
+</div>
 <mat-grid-list cols="7">
   <mat-grid-tile *ngFor="let weekday of weekdays">
     {{ weekday }}
   </mat-grid-tile>
   <mat-grid-tile *ngFor="let i of startOfMonthBuffer"></mat-grid-tile>
-  <mat-grid-tile *ngFor="let day of month">
-    {{ day }}
+  <mat-grid-tile *ngFor="let day of month; let i = index" [routerLink]="['/day', currentMonth.year, currentMonth.month, i]">
+    <div fxLayout="column">
+      <h3 *ngIf="i != 0">{{ i }}</h3>
+      <div *ngFor="let eventIndex of day">{{ events[eventIndex].agenda }}</div>
+    </div>
   </mat-grid-tile>
 </mat-grid-list>

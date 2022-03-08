@@ -26,6 +26,8 @@ import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor
 import { ProvidersService } from './services/providers.service';
 import { AuthGuard } from './guards/auth.guard';
 import { JWTService } from './services/jwt.service';
+import { CalendarService } from './services/calendar.service';
+import { AddComponent } from './components/add/add.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,8 @@ import { JWTService } from './services/jwt.service';
     MainComponent,
     DayComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    AddComponent
   ],
   imports: [
     BrowserModule,
@@ -56,6 +59,7 @@ import { JWTService } from './services/jwt.service';
     UserService,
     JWTService,
     ProvidersService,
+    CalendarService,
     AuthGuard,
     { provide: HTTP_INTERCEPTORS, useClass: JWTInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: UnauthorizedInterceptor, multi: true }

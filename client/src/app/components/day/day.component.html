@@ -1,1 +1,5 @@
-<p>day works!</p>
+<h2>{{ displayDay() }}</h2>
+<div fxLayout.gt-lg="column">
+  <p *ngFor="let event of events">{{ event.eventAsString }}</p>
+  <button mat-button (click)="backToMonth()">Back</button>
+</div>

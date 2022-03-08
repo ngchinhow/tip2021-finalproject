@@ -1,0 +1,18 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Quickly create a new event!</mat-card-title>
+    <form [formGroup]="form" (ngSubmit)="addEvent()">
+      <p>Fill in your event in natural language, e.g. Appointment at Somewhere on June 3rd 10am-10:25am</p>
+      <p>The application will automatically add an entry for you!</p>
+      <mat-form-field>
+        <mat-label>Event</mat-label>
+        <input matInput type="text" name="eventAsString" formControlName="eventAsString"
+          placeholder="Please enter your event" />
+        <mat-error> Please provide a valid email address </mat-error>
+      </mat-form-field>
+      <button type="submit" mat-raised-button color="primary">
+        Add
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>
