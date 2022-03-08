@@ -72,6 +72,7 @@ public class SocialOAuth2AuthorizationRequestResolver implements OAuth2Authoriza
             Map<String, Object> additionalParams = new HashMap<>();
             additionalParams.putAll(req.getAdditionalParameters());
             additionalParams.put("access_type", "offline");
+            additionalParams.put("prompt", "consent");
             return OAuth2AuthorizationRequest.from(req)
                 .additionalParameters(additionalParams)
                 .build();
