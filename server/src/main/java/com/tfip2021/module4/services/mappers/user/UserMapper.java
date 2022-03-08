@@ -1,4 +1,4 @@
-package com.tfip2021.module4.services.disseminators;
+package com.tfip2021.module4.services.mappers.user;
 
 import java.util.Map;
 
@@ -11,14 +11,14 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public abstract class PropertiesDisseminator {
+public abstract class UserMapper {
     private DatabaseUser user;
     private String operation;
     private String provider;
     private String providerUserId;
     Map<String, Object> attributes;
 
-    protected PropertiesDisseminator(Map<String, Object> attributes) {
+    protected UserMapper(Map<String, Object> attributes) {
         this.attributes = attributes;
     }
     

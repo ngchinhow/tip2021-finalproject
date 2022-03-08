@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.tfip2021.module4.models.DatabaseUser;
-import com.tfip2021.module4.services.DatabaseUserService;
+import com.tfip2021.module4.services.model.DatabaseUserService;
 import com.tfip2021.module4.utils.HttpServletRequestUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JWTService jwtService;
@@ -38,6 +40,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             .flatMap(jwtService::getUserIdFromJWT)
             // Retrieve user from database
             .flatMap(databaseUserService::getById);
+        log.debug(dbUser.toString());
         if (dbUser.isPresent()) {
             DatabaseUser foundUser = dbUser.get();
             UsernamePasswordAuthenticationToken authentication =

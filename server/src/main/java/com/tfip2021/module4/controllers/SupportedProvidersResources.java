@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "/api/auth")
 public class SupportedProvidersResources {
+
     @GetMapping(
         path = "/supported_providers",
         produces = MediaType.APPLICATION_JSON_VALUE

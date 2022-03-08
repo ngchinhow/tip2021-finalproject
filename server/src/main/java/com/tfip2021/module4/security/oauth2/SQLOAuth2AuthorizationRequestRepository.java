@@ -3,7 +3,7 @@ package com.tfip2021.module4.security.oauth2;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.tfip2021.module4.services.TransientOAuth2AuthorizationRequestService;
+import com.tfip2021.module4.services.model.TransientOAuth2AuthorizationRequestService;
 import com.tfip2021.module4.utils.HttpServletRequestUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;

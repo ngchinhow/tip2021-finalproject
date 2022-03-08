@@ -1,16 +1,16 @@
-package com.tfip2021.module4.services.disseminators;
+package com.tfip2021.module4.services.mappers.user;
 
 import java.util.Map;
 
 import com.tfip2021.module4.models.DatabaseUser;
 import com.tfip2021.module4.models.DatabaseUser.DatabaseUserBuilder;
 
-public class LocalPropertiesDisseminator extends PropertiesDisseminator {
-    public LocalPropertiesDisseminator(Map<String, Object> attributes) {
+public class LocalUserMapper extends UserMapper {
+    public LocalUserMapper(Map<String, Object> attributes) {
         super(attributes);
     }
 
-    public LocalPropertiesDisseminator(
+    public LocalUserMapper(
         DatabaseUser user,
         String operation,
         String provider,

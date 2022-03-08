@@ -11,7 +11,7 @@ import com.tfip2021.module4.dto.UserResponse;
 import com.tfip2021.module4.models.DatabaseUser;
 import com.tfip2021.module4.security.exceptions.DuplicateUserException;
 import com.tfip2021.module4.security.jwt.JWTService;
-import com.tfip2021.module4.services.DatabaseUserService;
+import com.tfip2021.module4.services.model.DatabaseUserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

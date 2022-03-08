@@ -1,4 +1,4 @@
-package com.tfip2021.module4.services.disseminators;
+package com.tfip2021.module4.services.mappers.user;
 
 import java.util.Map;
 
@@ -8,13 +8,13 @@ import com.tfip2021.module4.models.DatabaseUser.DatabaseUserBuilder;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 
-public class GooglePropertiesDisseminator extends PropertiesDisseminator {
+public class GoogleUserMapper extends UserMapper {
 
-    public GooglePropertiesDisseminator(Map<String, Object> attributes) {
+    public GoogleUserMapper(Map<String, Object> attributes) {
         super(attributes);
     }
 
-    public GooglePropertiesDisseminator(
+    public GoogleUserMapper(
         DatabaseUser user,
         String operation,
         String provider,

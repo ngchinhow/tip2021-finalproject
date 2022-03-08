@@ -1,6 +1,7 @@
 package com.tfip2021.module4.services;
 
 import com.tfip2021.module4.models.DatabaseUser;
+import com.tfip2021.module4.services.model.DatabaseUserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;

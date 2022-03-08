@@ -6,6 +6,7 @@ public class Constants {
         // Private constructor to prevent instantiating Constants
     }
 
+    public static final String APPLICATION_NAME = "Make My Day";
     public static final long PACKAGE_SERIAL_VERSION_UID = 100000000001L;
     public static final String OAUTH2_AUTHORIZATION_REQUEST_REGISTRATION_ID_ATTRIBUTE_NAME = "registration_id";
     public static final String REQUEST_STATE_PARAM_NAME = OAuth2ParameterNames.STATE;

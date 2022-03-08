@@ -2,7 +2,7 @@ package com.tfip2021.module4.security.oauth2;
 
 import javax.naming.AuthenticationNotSupportedException;
 
-import com.tfip2021.module4.services.DatabaseUserService;
+import com.tfip2021.module4.services.model.DatabaseUserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -23,7 +23,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             .getRegistrationId();
 
         try {
-            return service.upsert(
+            service.upsert(
                 provider,
                 oauth2User.getName(),
                 oauth2User.getAttributes()
@@ -33,5 +33,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 null, e.getMessage(), e.getCause()
             );
         }
+        return oauth2User;
     }
 }

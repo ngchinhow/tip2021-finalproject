@@ -1,4 +1,4 @@
-package com.tfip2021.module4.services;
+package com.tfip2021.module4.services.model;
 
 import java.util.Map;
 import java.util.Optional;
@@ -8,7 +8,7 @@ import javax.naming.AuthenticationNotSupportedException;
 import com.tfip2021.module4.models.DatabaseUser;
 import com.tfip2021.module4.repositories.DatabaseUserRepository;
 import com.tfip2021.module4.security.exceptions.DuplicateUserException;
-import com.tfip2021.module4.services.disseminators.PropertiesDisseminatorFactory;
+import com.tfip2021.module4.services.mappers.user.UserMapperFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +22,10 @@ public class DatabaseUserService {
         return repo.findById(userId);
     }
 
+    public DatabaseUser getByProviderUserId(String providerUserId) {
+        return repo.findByProviderUserId(providerUserId);
+    }
+
     public DatabaseUser getByEmail(String email) {
         return repo.findByEmail(email);
     }
@@ -31,7 +35,7 @@ public class DatabaseUserService {
         String providerUserId,
         Map<String, Object> attributes
     ) throws AuthenticationNotSupportedException {
-        String userEmail = PropertiesDisseminatorFactory
+        String userEmail = UserMapperFactory
             .getUserEmail(provider, attributes);
         DatabaseUser dbUser = this.getByEmail(userEmail);
         if (dbUser != null) {
@@ -60,12 +64,13 @@ public class DatabaseUserService {
         String providerUserId,
         Map<String, Object> attributes
     ) throws AuthenticationNotSupportedException {
-        return PropertiesDisseminatorFactory
+        return UserMapperFactory
             .mergeUserWithAttributes(
                 new DatabaseUser(),
                 "create",
                 provider,
-                providerUserId, attributes
+                providerUserId,
+                attributes
             );
     }
 
@@ -75,7 +80,7 @@ public class DatabaseUserService {
         String providerUserId,
         Map<String, Object> attributes
     ) throws AuthenticationNotSupportedException {
-        return PropertiesDisseminatorFactory
+        return UserMapperFactory
             .mergeUserWithAttributes(
                 dbUser,
                 "update",
@@ -83,5 +88,9 @@ public class DatabaseUserService {
                 providerUserId,
                 attributes
             );
+    }
+
+    public DatabaseUser save(DatabaseUser user) {
+        return repo.saveAndFlush(user);
     }
 } 

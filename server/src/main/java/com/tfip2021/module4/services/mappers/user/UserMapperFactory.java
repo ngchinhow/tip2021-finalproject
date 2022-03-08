@@ -1,4 +1,4 @@
-package com.tfip2021.module4.services.disseminators;
+package com.tfip2021.module4.services.mappers.user;
 
 import java.util.Map;
 
@@ -7,12 +7,11 @@ import javax.naming.AuthenticationNotSupportedException;
 import com.tfip2021.module4.dto.SocialProvider;
 import com.tfip2021.module4.models.DatabaseUser;
 
-import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-@Service
-public class PropertiesDisseminatorFactory {
+public class UserMapperFactory {
 
-    private PropertiesDisseminatorFactory() { }
+    private UserMapperFactory() { }
 
     public static DatabaseUser mergeUserWithAttributes(
         DatabaseUser user,
@@ -21,9 +20,9 @@ public class PropertiesDisseminatorFactory {
         String providerUserId,
         Map<String, Object> attributes
     ) throws AuthenticationNotSupportedException {
-        PropertiesDisseminator disseminator;
+        UserMapper mapper;
         if (registrationId.equals(SocialProvider.GOOGLE.getLoginProvider())) {
-            disseminator = new GooglePropertiesDisseminator(
+            mapper = new GoogleUserMapper(
                 user,
                 operation,
                 registrationId,
@@ -31,7 +30,7 @@ public class PropertiesDisseminatorFactory {
                 attributes
             );
         } else if (registrationId.equals(SocialProvider.LOCAL.getLoginProvider())) {
-            disseminator = new LocalPropertiesDisseminator(
+            mapper = new LocalUserMapper(
                 user,
                 operation,
                 registrationId,
@@ -41,24 +40,24 @@ public class PropertiesDisseminatorFactory {
         }
         else {
             throw new AuthenticationNotSupportedException(
-              "Authenticating via " + registrationId +
+              "Authenticating via " + StringUtils.capitalize(registrationId) +
               " is currently not supported."  
             );
         }
 
         // return DatabaseUser with disseminated attributes
-        return disseminator.disseminateAttributes();
+        return mapper.disseminateAttributes();
     }
 
     public static String getUserEmail(
         String registrationId,
         Map<String, Object> attributes
     ) throws AuthenticationNotSupportedException {
-        PropertiesDisseminator disseminator;
+        UserMapper mapper;
         if (registrationId.equals(SocialProvider.GOOGLE.getLoginProvider())) {
-            disseminator = new GooglePropertiesDisseminator(attributes);
+            mapper = new GoogleUserMapper(attributes);
         } else if (registrationId.equals(SocialProvider.LOCAL.getLoginProvider())) {
-            disseminator = new LocalPropertiesDisseminator(attributes);
+            mapper = new LocalUserMapper(attributes);
         }
         else {
             throw new AuthenticationNotSupportedException(
@@ -66,6 +65,6 @@ public class PropertiesDisseminatorFactory {
                 " is currently not supported."
             );
         }
-        return disseminator.getEmail();
+        return mapper.getEmail();
     }
 }

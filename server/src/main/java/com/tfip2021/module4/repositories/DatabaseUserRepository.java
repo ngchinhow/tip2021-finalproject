@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DatabaseUserRepository extends
     JpaRepository<DatabaseUser, Long> {
+
+    DatabaseUser findByProviderUserId(String providerUserId);
         
     DatabaseUser findByEmail(String email);
 }

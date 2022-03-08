@@ -9,11 +9,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.tfip2021.module4.models.DatabaseUser;
 import com.tfip2021.module4.security.jwt.JWTService;
-import com.tfip2021.module4.services.TransientOAuth2AuthorizationRequestService;
+import com.tfip2021.module4.services.model.DatabaseUserService;
+import com.tfip2021.module4.services.model.TransientOAuth2AuthorizationRequestService;
 import com.tfip2021.module4.utils.HttpServletRequestUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -22,12 +27,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+    @Autowired
+    private OAuth2AuthorizedClientService clientService;
     
     @Autowired
     private TransientOAuth2AuthorizationRequestService transientOAuth2AuthorizationRequestService;
 
     @Autowired
     private JWTService jwtSerivce;
+
+    @Autowired
+    private DatabaseUserService userService;
 
     @Override
     public void onAuthenticationSuccess (
@@ -36,6 +46,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Authentication authentication
     ) throws IOException {
         String targetUrl = determineTargetUrl(request, response, authentication);
+        storeTokens(authentication);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
@@ -49,8 +60,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String targetUrl = 
             transientOAuth2AuthorizationRequestService.getRedirectUri(state);
         transientOAuth2AuthorizationRequestService.deleteByState(state);
-        DatabaseUser dbUser = (DatabaseUser) authentication.getPrincipal();
-        String jwtToken = jwtSerivce.createJWT(dbUser.getUserId());
+
+        String jwtToken = jwtSerivce.createJWT(
+            getDatabaseUser(authentication).getUserId()
+        );
         URI uri = URI.create(targetUrl);
         String fragment = uri.getFragment().substring(1);
         try {
@@ -65,5 +78,25 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             log.error(e.getMessage());
         }
         return targetUrl;
+    }
+
+    private void storeTokens(Authentication authentication) {
+        OAuth2AuthenticationToken authenticationToken = 
+            (OAuth2AuthenticationToken) authentication;
+        OAuth2AuthorizedClient client = clientService.loadAuthorizedClient(
+            authenticationToken.getAuthorizedClientRegistrationId(),
+            authenticationToken.getName()
+        );
+        OAuth2User oauth2User = authenticationToken.getPrincipal();
+        DatabaseUser dbUser = userService.getByProviderUserId(oauth2User.getName());
+        log.info(">>> access token " + client.getAccessToken().getTokenValue());
+        dbUser.setAccessToken(client.getAccessToken().getTokenValue());
+        dbUser.setRefreshToken(client.getRefreshToken().getTokenValue());
+        userService.save(dbUser);
+    }
+
+    private DatabaseUser getDatabaseUser(Authentication authentication) {
+        OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+        return userService.getByProviderUserId(oauth2User.getName());
     }
 }

@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -21,7 +22,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -41,7 +41,7 @@ import lombok.Singular;
 @Getter
 @Setter
 @Table(
-    name = "USER",
+    name = "user",
     indexes = @Index(
         name = "email_index",
         columnList = "email"
@@ -49,9 +49,6 @@ import lombok.Singular;
 )
 public class DatabaseUser implements OidcUser, UserDetails {
     private static final long serialVersionUID = PACKAGE_SERIAL_VERSION_UID;
-    // For org.springframework.security.core.AuthenticatedPrincipal
-    @Transient
-    private static final String NAME_ATTRIBUTE_KEY = IdTokenClaimNames.SUB;
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,6 +77,12 @@ public class DatabaseUser implements OidcUser, UserDetails {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "accesstoken", length = 500)
+    private String accessToken;
+
+    @Column(name = "refreshtoken", length = 500)
+    private String refreshToken;
+    
     @Transient
     @Singular
     @Getter(AccessLevel.NONE)
@@ -107,7 +110,6 @@ public class DatabaseUser implements OidcUser, UserDetails {
 
     // From org.springframework.security.oauth2.core.user.DefaultOAuth2User
     @Transient
-    @Singular
     @Getter(AccessLevel.NONE)
     private transient Map<String, Object> attributes;
 
@@ -115,9 +117,14 @@ public class DatabaseUser implements OidcUser, UserDetails {
     @Transient
     @Getter(AccessLevel.NONE)
     private OidcIdToken idToken;
+
     @Transient
     @Getter(AccessLevel.NONE)
     private OidcUserInfo userInfo;
+
+    // Calendar events of a user
+    @OneToMany(mappedBy = "owner")
+    private transient Set<DatabaseEvent> events;
 
     @CreationTimestamp
     @Column(name = "createdat", nullable = false, updatable = false)
@@ -149,6 +156,6 @@ public class DatabaseUser implements OidcUser, UserDetails {
     public OidcUserInfo getUserInfo() { return userInfo; }
     @Override // From AuthenticatedPrincipal
     public String getName() {
-        return this.getAttribute(NAME_ATTRIBUTE_KEY).toString();
+        return this.getProviderUserId();
     }
 }

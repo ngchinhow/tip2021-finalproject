@@ -1,4 +1,4 @@
-package com.tfip2021.module4.services;
+package com.tfip2021.module4.services.model;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class TransientOAuth2AuthorizationRequestService {
     public OAuth2AuthorizationRequest deleteByState(String state) {
         List<TransientOAuth2AuthorizationRequest> deleted = 
             repo.deleteByState(state);
-        if (deleted.size() == 0) {
+        if (deleted.isEmpty()) {
             throw new IllegalArgumentException(
                 "TransientOAuth2AuthorizationRequest with state " + state +
                 "does not exist"
